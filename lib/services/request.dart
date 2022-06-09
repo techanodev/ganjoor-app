@@ -4,11 +4,10 @@ import 'package:ganjoor/services/ganjoor_service.dart';
 
 class Request {
   final String url;
-  final Function callback;
 
-  Request(this.url, this.callback);
+  Request(this.url);
 
-  get() {
+  get(Function callback) {
     Uri uri = Uri.parse(GanjoorService.baseUrl + url);
     http
         .get(uri)
