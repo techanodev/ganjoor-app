@@ -1,21 +1,31 @@
 class PoetModel {
   final int id;
+  final int rootCatId;
   final String name;
   final String nickname;
   final String description;
   final String fullUrl;
   final String imageUrl;
-  final int rootCatId;
 
-  PoetModel(this.id, this.name, this.description, this.fullUrl, this.imageUrl,
-      this.rootCatId, this.nickname);
+  PoetModel({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.fullUrl,
+    required this.imageUrl,
+    required this.rootCatId,
+    required this.nickname,
+  });
 
-  PoetModel.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        name = json['name'],
-        nickname = json['nickname'],
-        fullUrl = json['fullUrl'],
-        imageUrl = json['imageUrl'],
-        rootCatId = json['rootCatId'],
-        description = json['email'];
+  factory PoetModel.fromJson(Map<String, dynamic> json) {
+    return PoetModel(
+      id: json['id'] as int,
+      name: json['name'] as String,
+      nickname: json['nickname'] as String,
+      fullUrl: json['fullUrl'] as String,
+      imageUrl: json['imageUrl'] as String,
+      rootCatId: json['rootCatId'] as int,
+      description: json['email'] as String,
+    );
+  }
 }
