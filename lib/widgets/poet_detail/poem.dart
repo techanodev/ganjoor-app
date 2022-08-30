@@ -23,7 +23,7 @@ class Poem extends StatelessWidget {
           poem.title,
         ),
         subtitle: Text(
-          poem.fullTitle,
+          poem.excerpt,
         ),
       ),
     );

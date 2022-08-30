@@ -18,8 +18,7 @@ class PoetDetail extends StatefulWidget {
 }
 
 class _PoetDetailState extends State<PoetDetail> {
-  late PoetCompleteModel _poet;
-  bool _isLoading = true;
+  PoetCompleteModel? _poet;
   bool _poemIsLoading = false;
   List<PoemModel> _poems = [];
   final TextEditingController _searchController = TextEditingController();
@@ -42,11 +41,11 @@ class _PoetDetailState extends State<PoetDetail> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        body: !_isLoading
+        body: _poet != null
             ? SafeArea(
                 child: ListView(
                   children: [
-                    PoetDetailAppBar(poet: _poet),
+                    PoetDetailAppBar(poet: _poet!),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 20),
@@ -106,30 +105,27 @@ class _PoetDetailState extends State<PoetDetail> {
   }
 
   _getData() {
-    setState(() {
-      _isLoading = true;
-    });
-
     Request('/api/ganjoor/poet/${widget.id}').get((data) {
       if (data != null) {
         setState(() {
           _poet = PoetCompleteModel.fromJson(data);
-          _isLoading = false;
         });
       } else {
         AwesomeDialog(
-          context: context,
-          dialogType: DialogType.ERROR,
-          animType: AnimType.LEFTSLIDE,
-          headerAnimationLoop: false,
-          title: 'خطا',
-          aligment: Alignment.center,
-          desc:
-              'هنگام برقراری ارتباط با سرور با خطا مواجه شدیم لطفا اینترنت خود را چک کرده و مجددا تلاش کنید',
-          btnOkOnPress: _getData,
-          btnOkText: 'تلاش مجدد',
-          btnOkColor: Colors.green,
-        ).show();
+            context: context,
+            dialogType: DialogType.ERROR,
+            animType: AnimType.LEFTSLIDE,
+            headerAnimationLoop: false,
+            title: 'خطا',
+            aligment: Alignment.center,
+            desc:
+                'هنگام برقراری ارتباط با سرور با خطا مواجه شدیم لطفا اینترنت خود را چک کرده و مجددا تلاش کنید',
+            btnOkText: 'تلاش مجدد',
+            btnOkColor: Colors.green,
+            btnOkOnPress: _getData,
+            onDissmissCallback: (e) {
+              Navigator.of(context).pop();
+            }).show();
       }
     });
   }
@@ -144,7 +140,7 @@ class _PoetDetailState extends State<PoetDetail> {
     });
 
     q = q.replaceAll(' ', '+');
-    String url = '/api/ganjoor/poems/search?term=$q&poetId=${_poet.id}';
+    String url = '/api/ganjoor/poems/search?term=$q&poetId=${_poet!.id}';
 
     Request(url).get((data) {
       setState(() {
@@ -174,6 +170,7 @@ class _PoetDetailState extends State<PoetDetail> {
           onDissmissCallback: (d) {
             setState(() {
               _poemIsLoading = false;
+              _searchController.clear();
               _poems = [];
             });
           },
@@ -235,9 +232,9 @@ class _PoetDetailState extends State<PoetDetail> {
         ),
         Column(
           children: List.generate(
-            _poet.books.length,
+            _poet!.books.length,
             (index) => Book(
-              book: _poet.books[index],
+              book: _poet!.books[index],
               color: index % 2 == 0 ? Colors.blue : Colors.blueAccent,
             ),
           ),

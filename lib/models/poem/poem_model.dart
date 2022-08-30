@@ -1,22 +1,20 @@
 class PoemModel {
   final int id;
   final String title;
-  final String fullTitle;
-  final String plainText;
+  final String excerpt;
 
   PoemModel({
     required this.id,
     required this.title,
-    required this.fullTitle,
-    required this.plainText,
+    required this.excerpt,
   });
 
   factory PoemModel.fromJson(Map<String, dynamic> json) {
     return PoemModel(
       id: json['id'],
       title: json['title'],
-      fullTitle: json['fullTitle'],
-      plainText: json['plainText'],
+      excerpt:
+          json.containsKey('excerpt') ? json['excerpt'] : json['fullTitle'],
     );
   }
 }

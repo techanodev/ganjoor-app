@@ -4,10 +4,6 @@ import 'package:ganjoor/models/poet/poet.dart';
 import 'package:ganjoor/pages/poet_detail.dart';
 
 class PoetTile extends StatelessWidget {
-  // final int id;
-  // final String title;
-  // final String subtitle;
-  // final String imageUrl;
   final PoetModel poet;
   const PoetTile({
     Key? key,
@@ -52,9 +48,10 @@ class PoetTile extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => PoetDetail(
-                      id: poet.id,
-                    )),
+              builder: (context) => PoetDetail(
+                id: poet.id,
+              ),
+            ),
           );
         },
       ),
