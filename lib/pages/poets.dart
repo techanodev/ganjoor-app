@@ -2,8 +2,9 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:ganjoor/models/poet/poet.dart';
 import 'package:ganjoor/services/request.dart';
-import 'package:ganjoor/widgets/poet.dart';
-import 'package:ganjoor/widgets/search_bar.dart';
+import 'package:ganjoor/widgets/loading.dart';
+import 'package:ganjoor/widgets/main/poet.dart';
+import 'package:ganjoor/widgets/main/search_bar.dart';
 
 class PoetsListPage extends StatefulWidget {
   const PoetsListPage({Key? key}) : super(key: key);
@@ -15,8 +16,8 @@ class PoetsListPage extends StatefulWidget {
 class _PoetsListPageState extends State<PoetsListPage> {
   List<PoetModel> _poets = [];
   List<PoetModel> _p = [];
-
   final TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -35,9 +36,8 @@ class _PoetsListPageState extends State<PoetsListPage> {
       _p = _poets;
     }
     return Scaffold(
-      body: _poets.isEmpty
-          ? _buildLoading()
-          : CustomScrollView(
+      body: _poets.isNotEmpty
+          ? CustomScrollView(
               slivers: <Widget>[
                 SliverAppBar(
                   shape: const ContinuousRectangleBorder(
@@ -75,38 +75,18 @@ class _PoetsListPageState extends State<PoetsListPage> {
                     onPressed: () {},
                   ),
                 ),
-                _buildListView(),
+                _buildListPoets(),
               ],
-            ),
+            )
+          : loading(),
     );
   }
 
-  Widget _buildLoading() {
-    return const Center(
-      child: CircularProgressIndicator(
-        color: Colors.grey,
-      ),
-    );
-  }
-
-  Widget _buildListView() {
+  Widget _buildListPoets() {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-        (context, index) => Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: Colors.grey.withAlpha(120),
-                width: 0.4,
-              ),
-            ),
-          ),
-          child: PoetTile(
-            title: _p[index].name,
-            subtitle: _p[index].nickname,
-            imageUrl: _p[index].imageUrl,
-          ),
+        (context, index) => PoetTile(
+          poet: _p[index],
         ),
         childCount: _p.length,
       ),
@@ -116,12 +96,8 @@ class _PoetsListPageState extends State<PoetsListPage> {
   _getData() {
     Request('/api/ganjoor/poets').get((data) {
       if (data != null) {
-        List<PoetModel> poets = [];
-        data.forEach((item) {
-          poets.add(PoetModel.fromJson(item));
-        });
         setState(() {
-          _poets = poets;
+          _poets = data.map<PoetModel>((e) => PoetModel.fromJson(e)).toList();
         });
       } else {
         AwesomeDialog(

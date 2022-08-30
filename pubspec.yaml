@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^0.13.4
   awesome_dialog: ^2.2.1
+  expand_widget: ^2.1.0
 
 dev_dependencies:
   flutter_test:
