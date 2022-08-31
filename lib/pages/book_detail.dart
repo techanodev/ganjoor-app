@@ -5,6 +5,7 @@ import 'package:ganjoor/models/book/book_model.dart';
 import 'package:ganjoor/models/poem/poem_model.dart';
 import 'package:ganjoor/services/request.dart';
 import 'package:ganjoor/widgets/loading.dart';
+import 'package:ganjoor/widgets/poet_detail/book.dart';
 import 'package:ganjoor/widgets/poet_detail/poem.dart';
 
 class BookDetail extends StatefulWidget {
@@ -18,6 +19,7 @@ class BookDetail extends StatefulWidget {
 class _BookDetailState extends State<BookDetail> {
   List<PoemModel> _poems = [];
   List<PoemModel> _p = [];
+  List<BookModel> _sections = [];
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -112,7 +114,19 @@ class _BookDetailState extends State<BookDetail> {
                     ],
                   ),
                 )
-              : loading()),
+              : _sections.isNotEmpty
+                  ? ListView(
+                      children: List.generate(
+                        _sections.length,
+                        ((index) => Book(
+                              book: _sections[index],
+                              color: index % 2 == 0
+                                  ? Colors.blue
+                                  : Colors.blueAccent,
+                            )),
+                      ),
+                    )
+                  : loading()),
     );
   }
 
@@ -120,9 +134,15 @@ class _BookDetailState extends State<BookDetail> {
     Request('/api/ganjoor/cat/${widget.book.id}').get((data) {
       if (data != null) {
         setState(() {
-          _poems = data['cat']['poems']
-              .map<PoemModel>((e) => PoemModel.fromJson(e))
-              .toList();
+          if (data['cat']['poems'].isNotEmpty) {
+            _poems = data['cat']['poems']
+                .map<PoemModel>((e) => PoemModel.fromJson(e))
+                .toList();
+          } else {
+            _sections = data['cat']['children']
+                .map<BookModel>((e) => BookModel.fromJson(e))
+                .toList();
+          }
         });
       } else {
         AwesomeDialog(
