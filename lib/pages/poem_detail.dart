@@ -101,7 +101,6 @@ class _BookDetailState extends State<PoemDetail> {
                                             const Text(
                                               'منبع : ',
                                               style: TextStyle(
-                                                  fontSize: 18,
                                                   fontWeight: FontWeight.w700),
                                             ),
                                             Text(
@@ -112,16 +111,19 @@ class _BookDetailState extends State<PoemDetail> {
                                       : Container(),
                                   _poem!.rhythm.toString() != 'null'
                                       ? Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             const Text(
                                               'وزن : ',
                                               style: TextStyle(
-                                                fontSize: 18,
                                                 fontWeight: FontWeight.w700,
                                               ),
                                             ),
-                                            Text(
-                                              _poem!.rhythm,
+                                            Expanded(
+                                              child: Text(
+                                                _poem!.rhythm,
+                                              ),
                                             ),
                                           ],
                                         )
