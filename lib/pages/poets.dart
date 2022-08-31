@@ -66,14 +66,6 @@ class _PoetsListPageState extends State<PoetsListPage> {
                   ),
                   expandedHeight: 150,
                   backgroundColor: const Color.fromARGB(255, 250, 250, 250),
-                  leading: IconButton(
-                    icon: const Icon(
-                      Icons.menu,
-                      color: Colors.black,
-                    ),
-                    tooltip: 'Menu',
-                    onPressed: () {},
-                  ),
                 ),
                 _buildListPoets(),
               ],
@@ -112,6 +104,7 @@ class _PoetsListPageState extends State<PoetsListPage> {
           btnOkOnPress: _getData,
           btnOkText: 'تلاش مجدد',
           btnOkColor: Colors.green,
+          dismissOnTouchOutside: false,
         ).show();
       }
     });
