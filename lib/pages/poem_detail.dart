@@ -109,7 +109,7 @@ class _BookDetailState extends State<PoemDetail> {
                                           ],
                                         )
                                       : Container(),
-                                  _poem!.rhythm.toString() != 'null'
+                                  _poem!.rhythm != null
                                       ? Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -122,7 +122,7 @@ class _BookDetailState extends State<PoemDetail> {
                                             ),
                                             Expanded(
                                               child: Text(
-                                                _poem!.rhythm,
+                                                _poem!.rhythm!,
                                               ),
                                             ),
                                           ],
@@ -194,33 +194,26 @@ class _BookDetailState extends State<PoemDetail> {
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: List.generate(
-                          _poem!.vers.length ~/ 2,
-                          (index) => Column(
-                                children: [
-                                  Text(
-                                    _poem!.vers[index * 2].text,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: _fontSize,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: 5,
-                                      bottom: 25,
-                                    ),
-                                    child: Text(
-                                      _poem!.vers[index * 2 + 1].text,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: _fontSize,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )),
+                        _poem!.vers.last.coupletIndex + 1,
+                        (index) => Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: _poem!.vers
+                                .where(
+                                    (element) => element.coupletIndex == index)
+                                .map((e) {
+                              return Text(
+                                e.text,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: _fontSize,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
                     ),
                   )
                 ],

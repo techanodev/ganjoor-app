@@ -1,4 +1,4 @@
-package com.example.ganjoor
+package ir.techano.ganjoor
 
 import io.flutter.embedding.android.FlutterActivity
 

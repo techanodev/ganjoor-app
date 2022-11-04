@@ -5,7 +5,7 @@ class PoemCompleteModel {
   final String title;
   final String excerpt;
   final String source;
-  final String rhythm;
+  final String? rhythm;
   final List<VersModel> vers;
 
   PoemCompleteModel({
@@ -24,9 +24,12 @@ class PoemCompleteModel {
       excerpt:
           json.containsKey('excerpt') ? json['excerpt'] : json['fullTitle'],
       source: json['sourceName'],
-      rhythm: json['sections'][0]['ganjoorMetre']['rhythm'],
-      vers:
-          json['verses'].map<VersModel>((e) => VersModel.fromJson(e)).toList(),
+      rhythm: json['sections'][0]['ganjoorMetre'] != null
+          ? json['sections'][0]['ganjoorMetre']['rhythm']
+          : null,
+      vers: json.containsKey('verses')
+          ? json['verses'].map<VersModel>((e) => VersModel.fromJson(e)).toList()
+          : [],
     );
   }
 }
