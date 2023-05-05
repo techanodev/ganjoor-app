@@ -103,11 +103,14 @@ class _BookDetailState extends State<BookDetail> {
                           ),
                         ),
                       ),
-                      Column(
-                        children: List.generate(
-                          _p.length,
-                          (index) => Poem(
-                            poem: _p[index],
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 120),
+                        child: Column(
+                          children: List.generate(
+                            _p.length,
+                            (index) => Poem(
+                              poem: _p[index],
+                            ),
                           ),
                         ),
                       ),

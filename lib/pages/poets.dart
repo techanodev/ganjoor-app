@@ -20,14 +20,14 @@ class _PoetsListPageState extends State<PoetsListPage> {
 
   @override
   void initState() {
-    super.initState();
-    _getData();
+    if (_poets.length == 0) _getData();
     _searchController.addListener(() {
       setState(() {
         String q = _searchController.text;
         _p = _poets.where((element) => element.name.contains(q)).toList();
       });
     });
+    super.initState();
   }
 
   @override
@@ -66,6 +66,7 @@ class _PoetsListPageState extends State<PoetsListPage> {
                   ),
                   expandedHeight: 150,
                   backgroundColor: const Color.fromARGB(255, 250, 250, 250),
+                  shadowColor: Colors.grey.withAlpha(40),
                 ),
                 _buildListPoets(),
               ],
@@ -77,10 +78,18 @@ class _PoetsListPageState extends State<PoetsListPage> {
   Widget _buildListPoets() {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-        (context, index) => PoetTile(
-          poet: _p[index],
-        ),
-        childCount: _p.length,
+        (context, index) {
+          print(index);
+          if (index >= _p.length) {
+            return Container(
+              height: 120,
+            );
+          }
+          return PoetTile(
+            poet: _p[index],
+          );
+        },
+        childCount: _p.length + 1,
       ),
     );
   }

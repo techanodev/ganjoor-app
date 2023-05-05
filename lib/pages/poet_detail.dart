@@ -95,7 +95,10 @@ class _PoetDetailState extends State<PoetDetail> {
                       ),
                     ),
                     _poemsWidget(),
-                    _bookWidget(),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 120),
+                      child: _bookWidget(),
+                    ),
                   ],
                 ),
               )

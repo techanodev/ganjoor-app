@@ -34,6 +34,7 @@ class Poem extends StatelessWidget {
           ),
           subtitle: Text(
             poem.excerpt,
+            maxLines: 2,
           ),
         ),
       ),
