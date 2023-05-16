@@ -38,6 +38,10 @@ dependencies:
   awesome_dialog: ^2.2.1
   expand_widget: ^2.1.0
   flutter_launcher_icons: ^0.10.0
+  miniplayer: ^1.0.1
+  audio_video_progress_bar: ^0.11.0
+  just_audio: ^0.9.30
+  xml: ^6.1.0
 
 dev_dependencies:
   flutter_test:

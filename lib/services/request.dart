@@ -7,11 +7,11 @@ class Request {
 
   Request(this.url);
 
-  get(Function callback) {
+  get(Function callback, {parse = true}) {
     Uri uri = Uri.parse(GanjoorService.baseUrl + url);
     http
         .get(uri)
-        .then((value) => callback(json.decode(value.body)))
+        .then((value) => callback(parse ? json.decode(value.body) : value.body))
         .onError((error, stackTrace) => callback(null));
   }
 }

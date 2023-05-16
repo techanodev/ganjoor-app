@@ -1,19 +1,22 @@
 class VersModel {
   final int id;
-  final String text;
   final int coupletIndex;
+  final int vOrder;
+  final String text;
 
   VersModel({
     required this.id,
-    required this.text,
     required this.coupletIndex,
+    required this.vOrder,
+    required this.text,
   });
 
   factory VersModel.fromJson(Map<String, dynamic> json) {
     return VersModel(
       id: json['id'],
-      text: json['text'],
       coupletIndex: json['coupletIndex'],
+      vOrder: json['vOrder'],
+      text: json['text'],
     );
   }
 }

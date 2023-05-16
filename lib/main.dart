@@ -1,45 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:ganjoor/models/book/book_model.dart';
+import 'package:ganjoor/pages/book_detail.dart';
 import 'package:ganjoor/pages/poem_detail.dart';
-import 'package:ganjoor/pages/poet_detail.dart';
 import 'package:ganjoor/pages/poets.dart';
 import 'package:ganjoor/widgets/player.dart';
-import 'package:miniplayer/miniplayer.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 final _navigatorKey = GlobalKey();
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Miniplayer example',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Color(0xFFFAFAFA),
+        primaryColor: const Color(0xFFFAFAFA),
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key}) : super(key: key);
+
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  MyHomePageState createState() => MyHomePageState();
 }
 
-List<Widget> HomePage = [];
 MusicPlayer musicPlayer = MusicPlayer();
-Function gSetState = () {};
 
-class _MyHomePageState extends State<MyHomePage> {
+class MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    gSetState = () {
-      setState(() {
-        print('object');
-      });
-    };
     return Directionality(
       textDirection: TextDirection.rtl,
       child: WillPopScope(
@@ -59,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onGenerateRoute: (RouteSettings settings) {
                   return MaterialPageRoute(
                     settings: settings,
-                    builder: (BuildContext context) => PoetsListPage(),
+                    builder: (BuildContext context) => const PoetsListPage(),
                   );
                 },
               ),

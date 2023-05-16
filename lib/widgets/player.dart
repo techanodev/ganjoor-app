@@ -1,10 +1,9 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ganjoor/main.dart';
 import 'package:ganjoor/models/poet/poet_complete.dart';
-import 'package:ganjoor/widgets/loading.dart';
-import 'package:ganjoor/widgets/poet_detail/app_bar.dart';
+import 'package:ganjoor/models/recitation/vers_position.dart';
+import 'package:ganjoor/services/request.dart';
 import 'package:miniplayer/miniplayer.dart';
 import 'dart:math' as math;
 import 'package:just_audio/just_audio.dart';
@@ -12,20 +11,23 @@ import 'package:rxdart/rxdart.dart';
 import 'package:ganjoor/models/poem/poem_model_complete.dart';
 import 'package:ganjoor/models/recitation/recitation.dart';
 import 'package:ganjoor/models/position_data.dart';
+import 'package:xml/xml.dart';
 
 class MusicPlayer extends StatefulWidget {
   PoemCompleteModel? poem;
   PoetCompleteModel? poet;
   List<RecitationModel>? recitations;
+  List<VersPositionModel> versPositions = [];
 
   MusicPlayer({this.poem, this.recitations, this.poet});
   double _minHeight = 0;
   Function _state = () {};
   Function playMusic = () {};
-  Function addListener = () {};
+  Function getAudioPlayer = () {};
   Function pause = () {};
   Function resume = () {};
   bool isPlay = false;
+  int vser = 0;
   final MiniplayerController _controller = MiniplayerController();
 
   void start() {
@@ -38,18 +40,19 @@ class MusicPlayer extends StatefulWidget {
 
   @override
   State<MusicPlayer> createState() => _MusicPlayerState();
-  // State<MusicPlayer> createState() => _asa();
 }
 
 class _MusicPlayerState extends State<MusicPlayer> {
   final _player = AudioPlayer();
+  final Color _color = Color.fromARGB(255, 89, 89, 89);
 
   late String audioArtist = '';
   late String coverUrl = '';
   late String mp3Url = '';
   late String poetName = '';
   late String title = '';
-  // bool widget.isPlay = false;
+  int recitationId = 0;
+
   Stream<PositionData> get _positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
           _player.positionStream,
@@ -58,19 +61,49 @@ class _MusicPlayerState extends State<MusicPlayer> {
           (position, bufferedPosition, duration) => PositionData(
               position, bufferedPosition, duration ?? Duration.zero));
 
-  _addListener(Function func) {
-    _player.playingStream.listen((event) {
-      print(event);
-      func(event);
+  _getAudioPlayer() {
+    return _player;
+  }
+
+  getVersPositionModel(int id) {
+    Request('/api/audio/file/${id}.xml').get(parse: false, (data) {
+      if (data == null) {
+        getVersPositionModel(id);
+        return;
+      }
+      widget.versPositions = XmlDocument.parse(data)
+          .findAllElements('SyncInfo')
+          .map((e) => VersPositionModel(
+              id: int.parse(e.getElement('VerseOrder')!.text),
+              position: int.parse(e.getElement('AudioMiliseconds')!.text)))
+          .toList();
     });
   }
 
-  void _play(Function func) async {
+  void _changerecitation(int id) async {
+    _player.stop();
+    recitationId = id;
+    getVersPositionModel(widget.recitations![recitationId].id);
+    setState(() {
+      mp3Url = widget.recitations![recitationId].mp3Url;
+      audioArtist = widget.recitations![recitationId].artist;
+      coverUrl = widget.poet!.imageUrl;
+      poetName = widget.poet!.name;
+      title = widget.poem!.title;
+    });
+
+    await _player.setAudioSource(AudioSource.uri(Uri.parse(mp3Url)));
+    _player.play();
+  }
+
+  void _play() async {
     setState(() {
       widget.isPlay = true;
     });
-    mp3Url = widget.recitations![0].mp3Url;
-    audioArtist = widget.recitations![0].artist;
+    recitationId = 0;
+    getVersPositionModel(widget.recitations![recitationId].id);
+    mp3Url = widget.recitations![recitationId].mp3Url;
+    audioArtist = widget.recitations![recitationId].artist;
     coverUrl = widget.poet!.imageUrl;
     poetName = widget.poet!.name;
     title = widget.poem!.title;
@@ -79,17 +112,14 @@ class _MusicPlayerState extends State<MusicPlayer> {
     _player.play();
 
     _player.playerStateStream.listen((state) {
-      switch (state.processingState) {
-        case ProcessingState.completed:
-          setState(() {
-            _player.pause();
-            _player.seek(Duration.zero);
-            widget.isPlay = false;
-          });
-          break;
+      if (state.processingState == ProcessingState.completed) {
+        setState(() {
+          _player.pause();
+          _player.seek(Duration.zero);
+          widget.isPlay = false;
+        });
       }
     });
-    func();
   }
 
   void _pause() {
@@ -106,14 +136,29 @@ class _MusicPlayerState extends State<MusicPlayer> {
     });
   }
 
+  void _versListenre() {
+    _player.positionStream.listen((Duration p) {
+      int v = 0;
+      widget.versPositions.forEach((e) {
+        if (e.position < p.inMilliseconds) {
+          v = e.id;
+        }
+      });
+      setState(() {
+        widget.vser = v;
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     widget.playMusic = _play;
-    widget.addListener = _addListener;
+    widget.getAudioPlayer = _getAudioPlayer;
     widget.isPlay = _player.playing;
     widget.pause = _pause;
     widget.resume = _resume;
+    _versListenre();
   }
 
   @override
@@ -130,13 +175,6 @@ class _MusicPlayerState extends State<MusicPlayer> {
     widget._state = () {
       setState(() {});
     };
-    // if (audioArtist == '' ||
-    //     coverUrl == '' ||
-    //     mp3Url == '' ||
-    //     poetName == '' ||
-    //     title == '') {
-    //   return Container();
-    // }
 
     return Directionality(
       textDirection: TextDirection.ltr,
@@ -144,7 +182,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
         minHeight: widget._minHeight,
         maxHeight: height - 50,
         controller: widget._controller,
-        backgroundColor: Color.fromARGB(255, 98, 88, 88),
+        backgroundColor: _color,
         builder: (height, percentage) {
           int alpah = ((1 - (percentage / 0.4)) * 255).toInt();
           double balpah = ((percentage - 0.6) * 2.5);
@@ -152,10 +190,8 @@ class _MusicPlayerState extends State<MusicPlayer> {
           return widget._minHeight > 0
               ? Container(
                   decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 98, 88, 88),
-                      border: Border.all(
-                          color: const Color.fromARGB(255, 98, 88, 88),
-                          width: 0)),
+                      color: _color,
+                      border: Border.all(color: _color, width: 0)),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 18),
                     child: Stack(
@@ -206,7 +242,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                 ),
                                 percentage < 0.4
                                     ? Container(
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             horizontal: 10),
                                         width: width * 0.45,
                                         child: Column(
@@ -253,7 +289,6 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                           setState(() {
                                             widget.isPlay = !widget.isPlay;
                                           });
-                                          // gSetState();
                                         },
                                         child: Row(
                                           children: [
@@ -269,30 +304,6 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                                     .withAlpha(alpah),
                                               ),
                                             ),
-                                            // Padding(
-                                            //   padding: const EdgeInsets.symmetric(
-                                            //       horizontal: 8),
-                                            //   child: GestureDetector(
-                                            //     onTap: () {
-                                            //       widget._controller
-                                            //           .animateToHeight(height: 0);
-                                            //       Future.delayed(
-                                            //           const Duration(
-                                            //               milliseconds: 290), () {
-                                            //         setState(() {
-                                            //           widget._minHeight = 0;
-                                            //           _player.stop();
-                                            //         });
-                                            //       });
-                                            //     },
-                                            //     child: Icon(
-                                            //       CupertinoIcons.xmark,
-                                            //       size: 28,
-                                            //       color: Colors.white
-                                            //           .withAlpha(alpah),
-                                            //     ),
-                                            //   ),
-                                            // )
                                           ],
                                         ),
                                       )
@@ -342,7 +353,6 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                     builder: ((context, snapshot) {
                                       final positionData = snapshot.data;
 
-                                      // return Text(positionData!.position.toString());
                                       return Container(
                                         height: balpah * 50,
                                         padding: const EdgeInsets.all(8.0),
@@ -392,7 +402,6 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                         setState(() {
                                           widget.isPlay = !widget.isPlay;
                                         });
-                                        // gSetState();
                                       },
                                       child: Icon(
                                         widget.isPlay
@@ -411,10 +420,66 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                         vertical: balpah * 8),
                                     child: Align(
                                       alignment: Alignment.centerLeft,
-                                      child: Icon(
-                                        CupertinoIcons.music_mic,
-                                        size: balpah * 34,
-                                        color: Colors.white,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return Directionality(
+                                                  textDirection:
+                                                      TextDirection.rtl,
+                                                  child: SimpleDialog(
+                                                    backgroundColor: _color,
+                                                    title: const Text(
+                                                      'انتخاب خواننده',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 22,
+                                                      ),
+                                                    ),
+                                                    shape:
+                                                        const RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                        Radius.circular(15),
+                                                      ),
+                                                    ),
+                                                    children: widget
+                                                        .recitations!
+                                                        .map(
+                                                          (e) =>
+                                                              SimpleDialogOption(
+                                                            child: Text(
+                                                              e.artist,
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 17,
+                                                              ),
+                                                            ),
+                                                            onPressed: () {
+                                                              int id = widget
+                                                                  .recitations!
+                                                                  .indexOf(e);
+                                                              _changerecitation(
+                                                                  id);
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                        )
+                                                        .toList(),
+                                                  ),
+                                                );
+                                              });
+                                        },
+                                        icon: Icon(
+                                          CupertinoIcons.music_mic,
+                                          size: balpah * 34,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   )

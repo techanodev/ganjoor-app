@@ -79,7 +79,6 @@ class _PoetsListPageState extends State<PoetsListPage> {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          print(index);
           if (index >= _p.length) {
             return Container(
               height: 120,

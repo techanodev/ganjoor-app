@@ -24,11 +24,14 @@ class PoetSearchBar extends StatelessWidget {
             onTap: () {
               searchController.text = '';
             },
-            child: Icon(
-              Icons.cancel_outlined,
-              color: searchController.text.isEmpty
-                  ? Color(0xffC4C6CC)
-                  : Colors.black,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
+                Icons.cancel_outlined,
+                color: searchController.text.isEmpty
+                    ? Color(0xffC4C6CC)
+                    : Colors.black,
+              ),
             ),
           ),
           prefix: const Padding(

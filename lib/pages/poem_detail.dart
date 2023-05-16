@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:ganjoor/main.dart';
 import 'package:ganjoor/models/poem/poem_model_complete.dart';
 import 'package:ganjoor/models/poet/poet_complete.dart';
+import 'package:ganjoor/models/recitation/vers_position.dart';
 import 'package:ganjoor/models/recitation/recitation.dart';
 import 'package:ganjoor/services/request.dart';
 import 'package:ganjoor/widgets/loading.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:xml/xml.dart';
 
 class PoemDetail extends StatefulWidget {
   final int id;
@@ -16,17 +21,46 @@ class PoemDetail extends StatefulWidget {
 }
 
 class _BookDetailState extends State<PoemDetail> {
+  int _vers = 0;
+  double _fontSize = 18;
+  List<RecitationModel>? _recitations;
   PoemCompleteModel? _poem;
   PoetCompleteModel? _poet;
-  List<RecitationModel>? _recitations;
-  double _fontSize = 18;
-  late bool _isPlay = false;
+  List<VersPositionModel> _versPositions = [];
+  bool _isPlay = false;
+  bool _thisPoemIsPlay = false;
+  late StreamSubscription _positionStream;
+  late StreamSubscription _playingStream;
+  late AudioPlayer _audioPlayer;
 
   @override
   void initState() {
     _getData();
+    _audioPlayer = musicPlayer.getAudioPlayer();
+    _positionStream = _audioPlayer.positionStream.listen((Duration p) {
+      setState(() {
+        _vers = musicPlayer.vser;
+      });
+    });
+
+    _playingStream = _audioPlayer.playingStream.listen((e) {
+      setState(() {
+        if (musicPlayer.poem != null) {
+          if (musicPlayer.poem!.id == _poem!.id) {
+            _isPlay = e;
+          }
+        }
+      });
+    });
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _positionStream.cancel();
+    _playingStream.cancel();
+    super.dispose();
   }
 
   @override
@@ -162,7 +196,9 @@ class _BookDetailState extends State<PoemDetail> {
                                   onTap: () {
                                     setState(() {
                                       _isPlay = !_isPlay;
+
                                       if (musicPlayer.poem != null) {
+                                        _vers = 0;
                                         if (musicPlayer.poem!.id == _poem!.id) {
                                           if (!_isPlay) {
                                             musicPlayer.pause();
@@ -172,13 +208,17 @@ class _BookDetailState extends State<PoemDetail> {
                                           return;
                                         }
                                       }
+
                                       musicPlayer.poem = _poem;
                                       musicPlayer.recitations = _recitations;
                                       musicPlayer.poet = _poet;
-                                      musicPlayer.playMusic((a) {
-                                        print(a);
-                                      });
+                                      musicPlayer.playMusic();
                                       musicPlayer.start();
+                                      print(_audioPlayer.position);
+                                      if (_audioPlayer.position ==
+                                          Duration.zero) {
+                                        _vers = 0;
+                                      }
                                     });
                                   },
                                   child: Container(
@@ -252,7 +292,7 @@ class _BookDetailState extends State<PoemDetail> {
                       color: Colors.grey,
                     ),
                     Container(
-                      margin: EdgeInsets.only(bottom: 120),
+                      margin: const EdgeInsets.only(bottom: 120),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
@@ -265,12 +305,46 @@ class _BookDetailState extends State<PoemDetail> {
                                     .where((element) =>
                                         element.coupletIndex == index)
                                     .map((e) {
-                                  return Text(
-                                    e.text,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: _fontSize,
-                                      fontWeight: FontWeight.w500,
+                                  if (musicPlayer.poem != null) {
+                                    if (musicPlayer.poem!.id == _poem!.id) {
+                                      _thisPoemIsPlay = true;
+                                    }
+                                  }
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (_thisPoemIsPlay) {
+                                        for (var i = 0;
+                                            i <
+                                                musicPlayer
+                                                    .versPositions.length;
+                                            i++) {
+                                          VersPositionModel v =
+                                              musicPlayer.versPositions[i];
+                                          if (e.vOrder == 0) {
+                                            _audioPlayer.seek(
+                                                const Duration(seconds: 0));
+                                          } else if (e.vOrder - 1 == v.id) {
+                                            _audioPlayer.seek(Duration(
+                                                milliseconds: v.position + 1));
+                                          }
+                                        }
+                                      }
+                                    },
+                                    child: Text(
+                                      e.text,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: _fontSize,
+                                        fontWeight: e.vOrder == _vers + 1 &&
+                                                _thisPoemIsPlay
+                                            ? FontWeight.w800
+                                            : FontWeight.w500,
+                                        color: e.vOrder <= _vers + 1 &&
+                                                _thisPoemIsPlay
+                                            ? Colors.blue
+                                            : Colors.black,
+                                      ),
                                     ),
                                   );
                                 }).toList(),
@@ -303,18 +377,6 @@ class _BookDetailState extends State<PoemDetail> {
               _isPlay = musicPlayer.isPlay;
             }
           }
-          musicPlayer.addListener((e) {
-            setState(() {
-              if (musicPlayer.poem != null) {
-                if (musicPlayer.poem!.id == _poem!.id) {
-                  _isPlay = e;
-                }
-              }
-            });
-          });
-          // } else {
-          //   _isPlay = false;
-          // }
         });
       } else {
         AwesomeDialog(

@@ -4,7 +4,7 @@ class PoemCompleteModel {
   final int id;
   final String title;
   final String excerpt;
-  final String source;
+  final String? source;
   final String? rhythm;
   final List<VersModel> vers;
 
