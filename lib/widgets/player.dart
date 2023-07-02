@@ -1,16 +1,16 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ganjoor/models/poet/poet_complete.dart';
-import 'package:ganjoor/models/recitation/vers_position.dart';
-import 'package:ganjoor/services/request.dart';
+import 'package:sheidaie/models/poet/poet_complete.dart';
+import 'package:sheidaie/models/recitation/vers_position.dart';
+import 'package:sheidaie/services/request.dart';
 import 'package:miniplayer/miniplayer.dart';
 import 'dart:math' as math;
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:ganjoor/models/poem/poem_model_complete.dart';
-import 'package:ganjoor/models/recitation/recitation.dart';
-import 'package:ganjoor/models/position_data.dart';
+import 'package:sheidaie/models/poem/poem_model_complete.dart';
+import 'package:sheidaie/models/recitation/recitation.dart';
+import 'package:sheidaie/models/position_data.dart';
 import 'package:xml/xml.dart';
 
 class MusicPlayer extends StatefulWidget {
@@ -27,7 +27,7 @@ class MusicPlayer extends StatefulWidget {
   Function pause = () {};
   Function resume = () {};
   bool isPlay = false;
-  int vser = 0;
+  int vers = 0;
   final MiniplayerController _controller = MiniplayerController();
 
   void start() {
@@ -44,7 +44,7 @@ class MusicPlayer extends StatefulWidget {
 
 class _MusicPlayerState extends State<MusicPlayer> {
   final _player = AudioPlayer();
-  final Color _color = Color.fromARGB(255, 89, 89, 89);
+  final Color _color = const Color.fromARGB(255, 89, 89, 89);
 
   late String audioArtist = '';
   late String coverUrl = '';
@@ -66,7 +66,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
   }
 
   getVersPositionModel(int id) {
-    Request('/api/audio/file/${id}.xml').get(parse: false, (data) {
+    Request('/api/audio/file/$id.xml').get(parse: false, (data) {
       if (data == null) {
         getVersPositionModel(id);
         return;
@@ -80,7 +80,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
     });
   }
 
-  void _changerecitation(int id) async {
+  void _changeRecitation(int id) async {
     _player.stop();
     recitationId = id;
     getVersPositionModel(widget.recitations![recitationId].id);
@@ -136,16 +136,16 @@ class _MusicPlayerState extends State<MusicPlayer> {
     });
   }
 
-  void _versListenre() {
+  void _versListener() {
     _player.positionStream.listen((Duration p) {
       int v = 0;
-      widget.versPositions.forEach((e) {
+      for (var e in widget.versPositions) {
         if (e.position < p.inMilliseconds) {
           v = e.id;
         }
-      });
+      }
       setState(() {
-        widget.vser = v;
+        widget.vers = v;
       });
     });
   }
@@ -158,7 +158,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
     widget.isPlay = _player.playing;
     widget.pause = _pause;
     widget.resume = _resume;
-    _versListenre();
+    _versListener();
   }
 
   @override
@@ -184,8 +184,8 @@ class _MusicPlayerState extends State<MusicPlayer> {
         controller: widget._controller,
         backgroundColor: _color,
         builder: (height, percentage) {
-          int alpah = ((1 - (percentage / 0.4)) * 255).toInt();
-          double balpah = ((percentage - 0.6) * 2.5);
+          int alpha = ((1 - (percentage / 0.4)) * 255).toInt();
+          double balpha = ((percentage - 0.6) * 2.5);
 
           return widget._minHeight > 0
               ? Container(
@@ -212,7 +212,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                       child: Icon(
                                         Icons.arrow_back_ios,
                                         color: Colors.white
-                                            .withAlpha((balpah * 255).toInt()),
+                                            .withAlpha((balpha * 255).toInt()),
                                         size: 22,
                                       ),
                                     ),
@@ -258,7 +258,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 18,
                                                 color: Colors.white
-                                                    .withAlpha(alpah),
+                                                    .withAlpha(alpha),
                                               ),
                                             ),
                                             Text(
@@ -268,7 +268,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 16,
                                                 color: Colors.white
-                                                    .withAlpha(alpah),
+                                                    .withAlpha(alpha),
                                               ),
                                             ),
                                           ],
@@ -301,7 +301,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                                     : Icons.play_arrow,
                                                 size: 32,
                                                 color: Colors.white
-                                                    .withAlpha(alpah),
+                                                    .withAlpha(alpha),
                                               ),
                                             ),
                                           ],
@@ -319,9 +319,9 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                         maxLines: 1,
                                         style: TextStyle(
                                           fontWeight: FontWeight.w600,
-                                          fontSize: balpah * 22,
+                                          fontSize: balpha * 22,
                                           color: Colors.white.withAlpha(
-                                              (balpah * 255).toInt()),
+                                              (balpha * 255).toInt()),
                                         ),
                                       ),
                                       Text(
@@ -329,9 +329,9 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                         maxLines: 1,
                                         style: TextStyle(
                                           fontWeight: FontWeight.w500,
-                                          fontSize: balpah * 18,
+                                          fontSize: balpha * 18,
                                           color: Colors.white.withAlpha(
-                                              (balpah * 255).toInt()),
+                                              (balpha * 255).toInt()),
                                         ),
                                       ),
                                       Text(
@@ -339,9 +339,9 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                         maxLines: 1,
                                         style: TextStyle(
                                           fontWeight: FontWeight.w500,
-                                          fontSize: balpah * 18,
+                                          fontSize: balpha * 18,
                                           color: Colors.white.withAlpha(
-                                              (balpah * 255).toInt()),
+                                              (balpha * 255).toInt()),
                                         ),
                                       ),
                                     ],
@@ -354,23 +354,23 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                       final positionData = snapshot.data;
 
                                       return Container(
-                                        height: balpah * 50,
+                                        height: balpha * 50,
                                         padding: const EdgeInsets.all(8.0),
                                         child: ProgressBar(
                                           progressBarColor: Colors.white
                                               .withAlpha(
-                                                  (balpah * 200).toInt()),
+                                                  (balpha * 200).toInt()),
                                           thumbColor: Colors.white.withAlpha(
-                                              (balpah * 255).toInt()),
+                                              (balpha * 255).toInt()),
                                           baseBarColor: Colors.white
-                                              .withAlpha((balpah * 50).toInt()),
+                                              .withAlpha((balpha * 50).toInt()),
                                           timeLabelTextStyle: TextStyle(
                                             color: Colors.white.withAlpha(
-                                                (balpah * 200).toInt()),
+                                                (balpha * 200).toInt()),
                                           ),
                                           bufferedBarColor: Colors.white
                                               .withAlpha(
-                                                  (balpah * 100).toInt()),
+                                                  (balpha * 100).toInt()),
                                           total: positionData?.duration ??
                                               Duration.zero,
                                           progress: positionData?.position ??
@@ -386,10 +386,10 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                 : Container(),
                             percentage > 0.6
                                 ? Container(
-                                    padding: EdgeInsets.all(balpah * 8),
+                                    padding: EdgeInsets.all(balpha * 8),
                                     decoration: BoxDecoration(
                                       color: Colors.white
-                                          .withAlpha((balpah * 255).toInt()),
+                                          .withAlpha((balpha * 255).toInt()),
                                       shape: BoxShape.circle,
                                     ),
                                     child: GestureDetector(
@@ -407,9 +407,9 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                         widget.isPlay
                                             ? Icons.pause
                                             : Icons.play_arrow,
-                                        size: balpah * 48,
+                                        size: balpha * 48,
                                         color: Colors.black
-                                            .withAlpha((balpah * 255).toInt()),
+                                            .withAlpha((balpha * 255).toInt()),
                                       ),
                                     ),
                                   )
@@ -417,7 +417,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                             percentage > 0.6
                                 ? Padding(
                                     padding: EdgeInsets.symmetric(
-                                        vertical: balpah * 8),
+                                        vertical: balpha * 8),
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: IconButton(
@@ -462,7 +462,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                                               int id = widget
                                                                   .recitations!
                                                                   .indexOf(e);
-                                                              _changerecitation(
+                                                              _changeRecitation(
                                                                   id);
                                                               Navigator.of(
                                                                       context)
@@ -477,7 +477,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                         },
                                         icon: Icon(
                                           CupertinoIcons.music_mic,
-                                          size: balpah * 34,
+                                          size: balpha * 34,
                                           color: Colors.white,
                                         ),
                                       ),

@@ -1,4 +1,4 @@
-import 'package:ganjoor/services/ganjoor_service.dart';
+import 'package:sheidaie/services/ganjoor_service.dart';
 
 class PoetModel {
   final int id;

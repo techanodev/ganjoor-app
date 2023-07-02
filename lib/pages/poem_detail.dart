@@ -2,15 +2,15 @@ import 'dart:async';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:ganjoor/main.dart';
-import 'package:ganjoor/models/poem/poem_model_complete.dart';
-import 'package:ganjoor/models/poet/poet_complete.dart';
-import 'package:ganjoor/models/recitation/vers_position.dart';
-import 'package:ganjoor/models/recitation/recitation.dart';
-import 'package:ganjoor/services/request.dart';
-import 'package:ganjoor/widgets/loading.dart';
+import 'package:sheidaie/main.dart';
+import 'package:sheidaie/models/poem/poem_model_complete.dart';
+import 'package:sheidaie/models/poet/poet_complete.dart';
+import 'package:sheidaie/models/recitation/vers_position.dart';
+import 'package:sheidaie/models/recitation/recitation.dart';
+import 'package:sheidaie/services/request.dart';
+import 'package:sheidaie/widgets/loading.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:xml/xml.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PoemDetail extends StatefulWidget {
   final int id;
@@ -26,7 +26,6 @@ class _BookDetailState extends State<PoemDetail> {
   List<RecitationModel>? _recitations;
   PoemCompleteModel? _poem;
   PoetCompleteModel? _poet;
-  List<VersPositionModel> _versPositions = [];
   bool _isPlay = false;
   bool _thisPoemIsPlay = false;
   late StreamSubscription _positionStream;
@@ -39,7 +38,7 @@ class _BookDetailState extends State<PoemDetail> {
     _audioPlayer = musicPlayer.getAudioPlayer();
     _positionStream = _audioPlayer.positionStream.listen((Duration p) {
       setState(() {
-        _vers = musicPlayer.vser;
+        _vers = musicPlayer.vers;
       });
     });
 
@@ -174,6 +173,28 @@ class _BookDetailState extends State<PoemDetail> {
                                             ],
                                           )
                                         : Container(),
+                                    Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            launchUrl(
+                                              Uri.parse(
+                                                'https://ganjoor.net${_poem!.fullUrl}',
+                                              ),
+                                            );
+                                          },
+                                          child: const Text(
+                                            'نمایش در گنجور',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w800,
+                                              color: Colors.blue,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
@@ -214,7 +235,6 @@ class _BookDetailState extends State<PoemDetail> {
                                       musicPlayer.poet = _poet;
                                       musicPlayer.playMusic();
                                       musicPlayer.start();
-                                      print(_audioPlayer.position);
                                       if (_audioPlayer.position ==
                                           Duration.zero) {
                                         _vers = 0;
@@ -392,7 +412,9 @@ class _BookDetailState extends State<PoemDetail> {
             btnOkColor: Colors.green,
             btnOkOnPress: _getData,
             onDissmissCallback: (e) {
-              Navigator.of(context).pop();
+              if (e == DismissType.MODAL_BARRIER) {
+                Navigator.of(context).pop();
+              }
             }).show();
       }
     });

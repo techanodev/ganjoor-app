@@ -1,13 +1,13 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ganjoor/models/poem/poem_model.dart';
-import 'package:ganjoor/models/poet/poet_complete.dart';
-import 'package:ganjoor/services/request.dart';
-import 'package:ganjoor/widgets/loading.dart';
-import 'package:ganjoor/widgets/poet_detail/app_bar.dart';
-import 'package:ganjoor/widgets/poet_detail/book.dart';
-import 'package:ganjoor/widgets/poet_detail/poem.dart';
+import 'package:sheidaie/models/poem/poem_model.dart';
+import 'package:sheidaie/models/poet/poet_complete.dart';
+import 'package:sheidaie/services/request.dart';
+import 'package:sheidaie/widgets/loading.dart';
+import 'package:sheidaie/widgets/poet_detail/app_bar.dart';
+import 'package:sheidaie/widgets/poet_detail/book.dart';
+import 'package:sheidaie/widgets/poet_detail/poem.dart';
 
 class PoetDetail extends StatefulWidget {
   final int id;
@@ -67,7 +67,7 @@ class _PoetDetailState extends State<PoetDetail> {
                           child: Padding(
                             padding: const EdgeInsets.only(left: 10),
                             child: _poemIsLoading
-                                ? Container(
+                                ? SizedBox(
                                     width: 24,
                                     height: 24,
                                     child: loading(),
@@ -127,7 +127,9 @@ class _PoetDetailState extends State<PoetDetail> {
             btnOkColor: Colors.green,
             btnOkOnPress: _getData,
             onDissmissCallback: (e) {
-              Navigator.of(context).pop();
+              if (e == DismissType.MODAL_BARRIER) {
+                Navigator.of(context).pop();
+              }
             }).show();
       }
     });

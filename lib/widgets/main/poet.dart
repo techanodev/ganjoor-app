@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ganjoor/models/poet/poet.dart';
-import 'package:ganjoor/pages/poet_detail.dart';
+import 'package:sheidaie/models/poet/poet.dart';
+import 'package:sheidaie/pages/poet_detail.dart';
 
 class PoetTile extends StatelessWidget {
   final PoetModel poet;

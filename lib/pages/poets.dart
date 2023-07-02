@@ -1,10 +1,13 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:ganjoor/models/poet/poet.dart';
-import 'package:ganjoor/services/request.dart';
-import 'package:ganjoor/widgets/loading.dart';
-import 'package:ganjoor/widgets/main/poet.dart';
-import 'package:ganjoor/widgets/main/search_bar.dart';
+import 'package:sheidaie/models/poet/poet.dart';
+import 'package:sheidaie/services/request.dart';
+import 'package:sheidaie/widgets/splash_screen.dart';
+import 'package:sheidaie/widgets/main/poet.dart';
+import 'package:sheidaie/widgets/main/search_bar.dart';
 
 class PoetsListPage extends StatefulWidget {
   const PoetsListPage({Key? key}) : super(key: key);
@@ -20,7 +23,9 @@ class _PoetsListPageState extends State<PoetsListPage> {
 
   @override
   void initState() {
-    if (_poets.length == 0) _getData();
+    if (_poets.isEmpty) {
+      Timer(const Duration(seconds: 3), _getData);
+    }
     _searchController.addListener(() {
       setState(() {
         String q = _searchController.text;
@@ -71,7 +76,7 @@ class _PoetsListPageState extends State<PoetsListPage> {
                 _buildListPoets(),
               ],
             )
-          : loading(),
+          : SplashScreen(),
     );
   }
 

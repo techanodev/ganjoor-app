@@ -1,12 +1,12 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ganjoor/models/book/book_model.dart';
-import 'package:ganjoor/models/poem/poem_model.dart';
-import 'package:ganjoor/services/request.dart';
-import 'package:ganjoor/widgets/loading.dart';
-import 'package:ganjoor/widgets/poet_detail/book.dart';
-import 'package:ganjoor/widgets/poet_detail/poem.dart';
+import 'package:sheidaie/models/book/book_model.dart';
+import 'package:sheidaie/models/poem/poem_model.dart';
+import 'package:sheidaie/services/request.dart';
+import 'package:sheidaie/widgets/loading.dart';
+import 'package:sheidaie/widgets/poet_detail/book.dart';
+import 'package:sheidaie/widgets/poet_detail/poem.dart';
 
 class BookDetail extends StatefulWidget {
   final BookModel book;
@@ -159,9 +159,13 @@ class _BookDetailState extends State<BookDetail> {
                 'هنگام برقراری ارتباط با سرور با خطا مواجه شدیم لطفا اینترنت خود را چک کرده و مجددا تلاش کنید',
             btnOkText: 'تلاش مجدد',
             btnOkColor: Colors.green,
-            btnOkOnPress: _getData,
+            btnOkOnPress: () {
+              _getData();
+            },
             onDissmissCallback: (e) {
-              Navigator.of(context).pop();
+              if (e == DismissType.MODAL_BARRIER) {
+                Navigator.of(context).pop();
+              }
             }).show();
       }
     });

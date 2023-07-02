@@ -1,4 +1,4 @@
-package ir.techano.ganjoor
+package ir.techano.sheidaie
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ganjoor/models/book/book_model.dart';
-import 'package:ganjoor/pages/book_detail.dart';
-import 'package:ganjoor/pages/poem_detail.dart';
-import 'package:ganjoor/pages/poets.dart';
-import 'package:ganjoor/widgets/player.dart';
+import 'package:sheidaie/pages/poets.dart';
+import 'package:sheidaie/widgets/player.dart';
 
 void main() => runApp(const MyApp());
 
@@ -18,6 +15,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: const Color(0xFFFAFAFA),
+        fontFamily: 'Samim',
       ),
       home: const MyHomePage(),
     );

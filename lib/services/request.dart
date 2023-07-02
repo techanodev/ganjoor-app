@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:ganjoor/services/ganjoor_service.dart';
+import 'package:sheidaie/services/ganjoor_service.dart';
 
 class Request {
   final String url;

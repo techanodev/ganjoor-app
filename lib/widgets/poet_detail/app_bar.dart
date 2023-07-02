@@ -1,6 +1,6 @@
 import 'package:expand_widget/expand_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:ganjoor/models/poet/poet_complete.dart';
+import 'package:sheidaie/models/poet/poet_complete.dart';
 
 class PoetDetailAppBar extends StatelessWidget {
   final PoetCompleteModel poet;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ganjoor/models/book/book_model.dart';
-import 'package:ganjoor/pages/book_detail.dart';
+import 'package:sheidaie/models/book/book_model.dart';
+import 'package:sheidaie/pages/book_detail.dart';
 
 class Book extends StatelessWidget {
   final BookModel book;

@@ -1,5 +1,5 @@
-import 'package:ganjoor/models/book/book_model.dart';
-import 'package:ganjoor/services/ganjoor_service.dart';
+import 'package:sheidaie/models/book/book_model.dart';
+import 'package:sheidaie/services/ganjoor_service.dart';
 
 class PoetCompleteModel {
   final int id;
