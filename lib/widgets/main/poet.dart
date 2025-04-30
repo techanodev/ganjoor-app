@@ -5,11 +5,9 @@ import 'package:sheidaie/pages/poet_detail.dart';
 class PoetTile extends StatelessWidget {
   final PoetModel poet;
   const PoetTile({
-    Key? key,
+    super.key,
     required this.poet,
-  }) : super(
-          key: key,
-        );
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,7 @@ import 'package:sheidaie/pages/poem_detail.dart';
 class Poem extends StatelessWidget {
   final PoemModel poem;
 
-  const Poem({Key? key, required this.poem}) : super(key: key);
+  const Poem({super.key, required this.poem});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

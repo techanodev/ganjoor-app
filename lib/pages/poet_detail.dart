@@ -11,7 +11,7 @@ import 'package:sheidaie/widgets/poet_detail/poem.dart';
 
 class PoetDetail extends StatefulWidget {
   final int id;
-  const PoetDetail({Key? key, required this.id}) : super(key: key);
+  const PoetDetail({super.key, required this.id});
 
   @override
   State<PoetDetail> createState() => _PoetDetailState();

@@ -5,8 +5,7 @@ import 'package:sheidaie/pages/book_detail.dart';
 class Book extends StatelessWidget {
   final BookModel book;
   final Color color;
-  const Book({Key? key, required this.book, required this.color})
-      : super(key: key);
+  const Book({super.key, required this.book, required this.color});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

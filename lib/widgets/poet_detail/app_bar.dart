@@ -4,7 +4,7 @@ import 'package:sheidaie/models/poet/poet_complete.dart';
 
 class PoetDetailAppBar extends StatelessWidget {
   final PoetCompleteModel poet;
-  const PoetDetailAppBar({Key? key, required this.poet}) : super(key: key);
+  const PoetDetailAppBar({super.key, required this.poet});
   @override
   Widget build(BuildContext context) {
     return Padding(
