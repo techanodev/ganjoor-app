@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 
 class PoetSearchBar extends StatelessWidget {
   final TextEditingController searchController;
-  const PoetSearchBar({Key? key, required this.searchController})
-      : super(key: key);
+  const PoetSearchBar({super.key, required this.searchController});
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16.0, 6.0, 16.0, 16.0),
-      child: Container(
+      child: SizedBox(
         height: 36.0,
         width: double.infinity,
         child: CupertinoTextField(

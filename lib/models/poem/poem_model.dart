@@ -13,8 +13,7 @@ class PoemModel {
     return PoemModel(
       id: json['id'],
       title: json['title'],
-      excerpt:
-          json.containsKey('excerpt') ? json['excerpt'] : json['fullTitle'],
+      excerpt: json['excerpt'] ?? json['fullTitle'],
     );
   }
 }

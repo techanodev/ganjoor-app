@@ -14,7 +14,7 @@ class VersModel {
   factory VersModel.fromJson(Map<String, dynamic> json) {
     return VersModel(
       id: json['id'],
-      coupletIndex: json['coupletIndex'],
+      coupletIndex: json['coupletIndex'] ?? json['vOrder'],
       vOrder: json['vOrder'],
       text: json['text'],
     );

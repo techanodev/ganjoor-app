@@ -3,8 +3,8 @@ import 'package:sheidaie/models/poem/verse_model.dart';
 class PoemCompleteModel {
   final int id;
   final String title;
+  final String url;
   final String excerpt;
-  final String fullUrl;
   final String? source;
   final String? rhythm;
   final List<VersModel> vers;
@@ -12,8 +12,8 @@ class PoemCompleteModel {
   PoemCompleteModel({
     required this.id,
     required this.title,
+    required this.url,
     required this.excerpt,
-    required this.fullUrl,
     required this.source,
     required this.rhythm,
     required this.vers,
@@ -23,16 +23,14 @@ class PoemCompleteModel {
     return PoemCompleteModel(
       id: json['id'],
       title: json['title'],
-      excerpt:
-          json.containsKey('excerpt') ? json['excerpt'] : json['fullTitle'],
-      fullUrl: json['fullUrl'],
+      url: json['fullUrl'],
+      excerpt: json['excerpt'] ?? json['fullTitle'],
       source: json['sourceName'],
-      rhythm: json['sections'][0]['ganjoorMetre'] != null
+      rhythm: json['sections'].isNotEmpty
           ? json['sections'][0]['ganjoorMetre']['rhythm']
           : null,
-      vers: json.containsKey('verses')
-          ? json['verses'].map<VersModel>((e) => VersModel.fromJson(e)).toList()
-          : [],
+      vers:
+          json['verses'].map<VersModel>((e) => VersModel.fromJson(e)).toList(),
     );
   }
 }

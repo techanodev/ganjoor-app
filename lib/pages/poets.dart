@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:sheidaie/models/poet/poet.dart';
@@ -10,7 +8,7 @@ import 'package:sheidaie/widgets/main/poet.dart';
 import 'package:sheidaie/widgets/main/search_bar.dart';
 
 class PoetsListPage extends StatefulWidget {
-  const PoetsListPage({Key? key}) : super(key: key);
+  const PoetsListPage({super.key});
 
   @override
   State<PoetsListPage> createState() => _PoetsListPageState();
@@ -99,19 +97,41 @@ class _PoetsListPageState extends State<PoetsListPage> {
   }
 
   _getData() {
+    List banId = [
+      147,
+      92,
+      42,
+      8,
+      190,
+      48,
+      41,
+      35,
+      147,
+      182,
+      150,
+      68,
+      87,
+      134,
+      27,
+      153
+    ];
     Request('/api/ganjoor/poets').get((data) {
       if (data != null) {
         setState(() {
-          _poets = data.map<PoetModel>((e) => PoetModel.fromJson(e)).toList();
+          data = data.where((element) => !banId.contains(element['id']));
+
+          _poets = data.map<PoetModel>((e) {
+            return PoetModel.fromJson(e);
+          }).toList();
         });
       } else {
         AwesomeDialog(
           context: context,
-          dialogType: DialogType.ERROR,
-          animType: AnimType.LEFTSLIDE,
+          dialogType: DialogType.error,
+          animType: AnimType.leftSlide,
           headerAnimationLoop: false,
           title: 'خطا',
-          aligment: Alignment.center,
+          alignment: Alignment.center,
           desc:
               'هنگام برقراری ارتباط با سرور با خطا مواجه شدیم لطفا اینترنت خود را چک کرده و مجددا تلاش کنید',
           btnOkOnPress: _getData,

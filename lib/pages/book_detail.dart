@@ -150,11 +150,11 @@ class _BookDetailState extends State<BookDetail> {
       } else {
         AwesomeDialog(
             context: context,
-            dialogType: DialogType.ERROR,
-            animType: AnimType.LEFTSLIDE,
+            dialogType: DialogType.error,
+            animType: AnimType.leftSlide,
             headerAnimationLoop: false,
             title: 'خطا',
-            aligment: Alignment.center,
+            alignment: Alignment.center,
             desc:
                 'هنگام برقراری ارتباط با سرور با خطا مواجه شدیم لطفا اینترنت خود را چک کرده و مجددا تلاش کنید',
             btnOkText: 'تلاش مجدد',
@@ -162,8 +162,8 @@ class _BookDetailState extends State<BookDetail> {
             btnOkOnPress: () {
               _getData();
             },
-            onDissmissCallback: (e) {
-              if (e == DismissType.MODAL_BARRIER) {
+            onDismissCallback: (e) {
+              if (e == DismissType.modalBarrier) {
                 Navigator.of(context).pop();
               }
             }).show();

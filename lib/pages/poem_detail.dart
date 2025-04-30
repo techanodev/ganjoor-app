@@ -7,14 +7,16 @@ import 'package:sheidaie/models/poem/poem_model_complete.dart';
 import 'package:sheidaie/models/poet/poet_complete.dart';
 import 'package:sheidaie/models/recitation/vers_position.dart';
 import 'package:sheidaie/models/recitation/recitation.dart';
+import 'package:sheidaie/services/ganjoor_service.dart';
 import 'package:sheidaie/services/request.dart';
 import 'package:sheidaie/widgets/loading.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:comment_tree/widgets/comment_tree_widget.dart';
 
 class PoemDetail extends StatefulWidget {
   final int id;
-  const PoemDetail({Key? key, required this.id}) : super(key: key);
+  const PoemDetail({super.key, required this.id});
 
   @override
   State<PoemDetail> createState() => _BookDetailState();
@@ -77,7 +79,8 @@ class _BookDetailState extends State<PoemDetail> {
                     Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -133,70 +136,61 @@ class _BookDetailState extends State<PoemDetail> {
                                   ],
                                 ),
                               ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _poem!.source.toString() != 'null'
-                                        ? Row(
-                                            children: [
-                                              const Text(
-                                                'منبع : ',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w700),
-                                              ),
-                                              Text(
-                                                _poem!.source.toString(),
-                                              ),
-                                            ],
-                                          )
-                                        : Container(),
-                                    _poem!.rhythm != null
-                                        ? Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'وزن : ',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: Text(
-                                                  _poem!.rhythm!,
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        : Container(),
-                                    Row(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            launchUrl(
-                                              Uri.parse(
-                                                'https://ganjoor.net${_poem!.fullUrl}',
-                                              ),
-                                            );
-                                          },
-                                          child: const Text(
-                                            'نمایش در گنجور',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w800,
-                                              color: Colors.blue,
-                                              decoration:
-                                                  TextDecoration.underline,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _poem!.source.toString() != 'null'
+                                      ? Row(
+                                          children: [
+                                            const Text(
+                                              'منبع : ',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w700),
                                             ),
-                                          ),
-                                        ),
-                                      ],
+                                            Text(
+                                              _poem!.source.toString(),
+                                            ),
+                                          ],
+                                        )
+                                      : Container(),
+                                  _poem!.rhythm != null
+                                      ? Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              'وزن : ',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                _poem!.rhythm!,
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : Container(),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 5),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        launchUrl(Uri.parse(
+                                            GanjoorService.siteUrl +
+                                                _poem!.url));
+                                      },
+                                      child: const Text(
+                                        'نمایش در گنجور',
+                                        style: TextStyle(
+                                            color: Colors.blue,
+                                            fontWeight: FontWeight.w700,
+                                            decoration:
+                                                TextDecoration.underline),
+                                      ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -205,7 +199,7 @@ class _BookDetailState extends State<PoemDetail> {
                     ),
                     Container(
                       width: double.infinity,
-                      height: 0.5,
+                      height: 0.2,
                       color: Colors.grey,
                     ),
                     Padding(
@@ -308,7 +302,7 @@ class _BookDetailState extends State<PoemDetail> {
                     ),
                     Container(
                       width: double.infinity,
-                      height: 0.5,
+                      height: 0.4,
                       color: Colors.grey,
                     ),
                     Container(
@@ -373,7 +367,68 @@ class _BookDetailState extends State<PoemDetail> {
                           ),
                         ),
                       ),
-                    )
+                    ),
+                    CommentTreeWidget({
+                      'id': 1,
+                      'name': 'armin'
+                    }, [
+                      {'id': 2, 'name': 'benyamin1'},
+                      {'id': 2, 'name': 'benyamin1'}
+                    ],
+                        avatarRoot: (context, Map value) => PreferredSize(
+                              preferredSize: Size.fromRadius(18),
+                              child: Container(
+                                padding: EdgeInsets.all(18),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  value['name'][0],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        avatarChild: (context, Map value) => PreferredSize(
+                              preferredSize: Size.fromRadius(18),
+                              child: Container(
+                                padding: EdgeInsets.all(18),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  value['name'][0],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        contentChild: (context, data) {
+                          return Column(
+                            children: [
+                              Container(
+                                width: 100,
+                                height: 100,
+                                color: Colors.red,
+                              )
+                            ],
+                          );
+                        },
+                        contentRoot: (context, Map data) {
+                          return Column(
+                            children: [
+                              Container(
+                                width: 100,
+                                height: 100,
+                                color: Colors.blue,
+                              )
+                            ],
+                          );
+                        }),
                   ],
                 )
               : loading(),
@@ -401,18 +456,18 @@ class _BookDetailState extends State<PoemDetail> {
       } else {
         AwesomeDialog(
             context: context,
-            dialogType: DialogType.ERROR,
-            animType: AnimType.LEFTSLIDE,
+            dialogType: DialogType.error,
+            animType: AnimType.leftSlide,
             headerAnimationLoop: false,
             title: 'خطا',
-            aligment: Alignment.center,
+            alignment: Alignment.center,
             desc:
                 'هنگام برقراری ارتباط با سرور با خطا مواجه شدیم لطفا اینترنت خود را چک کرده و مجددا تلاش کنید',
             btnOkText: 'تلاش مجدد',
             btnOkColor: Colors.green,
             btnOkOnPress: _getData,
-            onDissmissCallback: (e) {
-              if (e == DismissType.MODAL_BARRIER) {
+            onDismissCallback: (e) {
+              if (e == DismissType.modalBarrier) {
                 Navigator.of(context).pop();
               }
             }).show();

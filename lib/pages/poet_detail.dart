@@ -116,18 +116,18 @@ class _PoetDetailState extends State<PoetDetail> {
       } else {
         AwesomeDialog(
             context: context,
-            dialogType: DialogType.ERROR,
-            animType: AnimType.LEFTSLIDE,
+            dialogType: DialogType.error,
+            animType: AnimType.leftSlide,
             headerAnimationLoop: false,
             title: 'خطا',
-            aligment: Alignment.center,
+            alignment: Alignment.center,
             desc:
                 'هنگام برقراری ارتباط با سرور با خطا مواجه شدیم لطفا اینترنت خود را چک کرده و مجددا تلاش کنید',
             btnOkText: 'تلاش مجدد',
             btnOkColor: Colors.green,
             btnOkOnPress: _getData,
-            onDissmissCallback: (e) {
-              if (e == DismissType.MODAL_BARRIER) {
+            onDismissCallback: (e) {
+              if (e == DismissType.modalBarrier) {
                 Navigator.of(context).pop();
               }
             }).show();
@@ -162,17 +162,17 @@ class _PoetDetailState extends State<PoetDetail> {
       } else {
         AwesomeDialog(
           context: context,
-          dialogType: DialogType.ERROR,
-          animType: AnimType.LEFTSLIDE,
+          dialogType: DialogType.error,
+          animType: AnimType.leftSlide,
           headerAnimationLoop: false,
           title: 'خطا',
-          aligment: Alignment.center,
+          alignment: Alignment.center,
           desc:
               'هنگام برقراری ارتباط با سرور با خطا مواجه شدیم لطفا اینترنت خود را چک کرده و مجددا تلاش کنید',
           btnOkOnPress: () {
             _searchSubmitted(q);
           },
-          onDissmissCallback: (d) {
+          onDismissCallback: (d) {
             setState(() {
               _poemIsLoading = false;
               _searchController.clear();
